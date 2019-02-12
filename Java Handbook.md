@@ -1,14 +1,67 @@
-Topics Covered:
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- Default Methods
-- Lambda Expressions
-- Streams
-- Common UseCases
-- Java Type Annotation
-- Generalized Target Type Inference
-- Optional and Value Types (Monads)
-- Compact Profiles
-- Date and Time API
+- [Java 8](#java-8)
+  - [Default Methods for Interfaces](#default-methods-for-interfaces)
+    - [What?](#what)
+    - [How?](#how)
+    - [Why?](#why)
+  - [Lambda Expressions](#lambda-expressions)
+    - [What?](#what-1)
+    - [How?](#how-1)
+      - [Using invokedynamic](#using-invokedynamic)
+    - [Why?](#why-1)
+  - [Streams](#streams)
+    - [What?](#what-2)
+      - [Streams vs Collections](#streams-vs-collections)
+      - [Parallel Streams](#parallel-streams)
+    - [How?](#how-2)
+      - [Internal representation of a Stream](#internal-representation-of-a-stream)
+      - [Internal representation of a Stream pipeline](#internal-representation-of-a-stream-pipeline)
+      - [Internals of a Stream execution](#internals-of-a-stream-execution)
+    - [Why?](#why-2)
+      - [Collectors "utility" class](#collectors-utility-class)
+      - [Collector Abstraction](#collector-abstraction)
+      - [Collector interface](#collector-interface)
+      - [Custom collector](#custom-collector)
+      - [Parallelism](#parallelism)
+      - [Using Parallelism carefully](#using-parallelism-carefully)
+      - [Amdahl's law](#amdahls-law)
+      - [NQ Model](#nq-model)
+    - [Common Usecases](#common-usecases)
+      - [1. Converting List Objects to Maps](#1-converting-list-objects-to-maps)
+      - [2. Handling of Exceptions](#2-handling-of-exceptions)
+      - [3. Converting Optional to a Stream](#3-converting-optional-to-a-stream)
+      - [4. Serializing Lambda](#4-serializing-lambda)
+      - [5. Split Stream](#5-split-stream)
+      - [6. Performance impact of lambdas & streams](#6-performance-impact-of-lambdas--streams)
+      - [7. Stream operations on Lists](#7-stream-operations-on-lists)
+      - [8. Modify a non-Final variable in lambda](#8-modify-a-non-final-variable-in-lambda)
+  - [Java Type Annotations](#java-type-annotations)
+    - [Overview of Built-in Annotations in JDK < 1.7](#overview-of-built-in-annotations-in-jdk--17)
+    - [What?](#what-3)
+    - [How?](#how-3)
+    - [Why?](#why-3)
+  - [Generalized Target Type Inference](#generalized-target-type-inference)
+    - [What?](#what-4)
+    - [How?](#how-4)
+    - [Why?](#why-4)
+  - [Optional and Value Types](#optional-and-value-types)
+    - [About Objects Identity and Values](#about-objects-identity-and-values)
+      - [Why think about identity?](#why-think-about-identity)
+    - [Value Types and Value Based Classes](#value-types-and-value-based-classes)
+  - [Optional](#optional)
+    - [What?](#what-5)
+    - [Why?](#why-5)
+    - [How?](#how-5)
+      - [Short story on Monads](#short-story-on-monads)
+      - [Back to Optional](#back-to-optional)
+      - [Closures](#closures)
+  - [Compact Profiles](#compact-profiles)
+  - [Date and Time API](#date-and-time-api)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Java 8
 
@@ -1437,7 +1490,7 @@ h(0) = f(0)
 h(n) = f(n) + h(n-1)
 ```
 
-![par1Figure3](/Users/johne/Desktop/Backed Desktop/java, jvm, jdk8, jee/par1Figure3.png)
+![par1Figure3](https://github.com/john77eipe/Java-8-Handbook/blob/master/par1Figure3.png)
 
 
 
@@ -1451,7 +1504,7 @@ h(n) = f(0) + f(1) + .. + f(n)
 
 The result is a dataflow dependency graph like the one shown in Figure 4, in which each `h(n)` can be computed independently.
 
-![par1Figure4](/Users/johne/Desktop/Backed Desktop/java, jvm, jdk8, jee/par1Figure4.png)
+![par1Figure4](https://github.com/john77eipe/Java-8-Handbook/blob/master/par1Figure4.png)
 
  These examples show us two things: first, that similar-looking problems can have vastly different degrees of exploitable parallelism; and second, that the "obvious" implementation of a solution to a problem with exploitable parallelism might not necessarily **exploit** that parallelism. To have any chance of getting a speedup, we need both.
 
@@ -1459,9 +1512,9 @@ The result is a dataflow dependency graph like the one shown in Figure 4, in whi
 
 #### Amdahl's law
 
-[Amdahl's law](https://en.wikipedia.org/wiki/Amdahl's_law) describes how the sequential portion of a computation limits the possible parallel speedup. Most problems have some amount of work that cannot be parallelized; this is called the *serial fraction*. For example, if you are going to copy the data from one array to another, the copying might be parallelizable, but the allocation of the target array — which is inherently sequential — must happen before any copying can happen.
+[Amdahl's law](https://en.wikipedia.org/wiki/Amdahl's_law) describes how the sequentiala portion of a computation limits the possible parallel speedup. Most problems have some amount of work that cannot be parallelized; this is called the *serial fraction*. For example, if you are going to copy the data from one array to another, the copying might be parallelizable, but the allocation of the target array — which is inherently sequential — must happen before any copying can happen.
 
-![Par1Figure5](/Users/johne/Desktop/Backed Desktop/java, jvm, jdk8, jee/Par1Figure5.png)
+![Par1Figure5](https://github.com/john77eipe/Java-8-Handbook/blob/master/par1Figure5.png)
 
 
 
