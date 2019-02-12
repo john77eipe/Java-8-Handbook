@@ -38,6 +38,7 @@
       - [6. Performance impact of lambdas & streams](#6-performance-impact-of-lambdas--streams)
       - [7. Stream operations on Lists](#7-stream-operations-on-lists)
       - [8. Modify a non-Final variable in lambda](#8-modify-a-non-final-variable-in-lambda)
+	  - [9. flatMap vs Map] (#9-flatmap-vs-map)
   - [Java Type Annotations](#java-type-annotations)
     - [Overview of Built-in Annotations in JDK < 1.7](#overview-of-built-in-annotations-in-jdk--17)
     - [What?](#what-3)
@@ -2461,6 +2462,109 @@ long sumRT = LongStream.rangeClosed(1, LIMIT)
 ```
 
 That's the end of the story and the lesson learnt is to always look for existing APIs within the JDK.
+
+#### 9. flatMap vs Map
+
+Consider the following scenario
+
+```java
+public class Customer {
+    private String name;
+    private List<Order> orders = new ArrayList<>();
+
+    public Customer(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Customer addOrder(Order order) {
+        orders.add(order);
+        return this;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+}
+public class Order {
+    private int id;
+}
+
+Customer sheridan = new Customer("Sheridan");
+Customer ivanova = new Customer("Ivanova");
+Customer garibaldi = new Customer("Garibaldi");
+
+sheridan.addOrder(new Order(1))
+        .addOrder(new Order(2))
+        .addOrder(new Order(3));
+ivanova.addOrder(new Order(4))
+        .addOrder(new Order(5));
+
+List<Customer> customers = Arrays.asList(sheridan, ivanova, garibaldi);
+```
+
+Let's say that you need to print only the customers names:
+```java
+// map for 1-1 customer to name --> Stream<String>
+customers.stream()
+        .map(Customer::getName) // function<Customer,String>
+        .forEach(System.out::println);
+```
+
+Let's say you want to print all the order numbers from the `customers`
+```java
+// map 1-many customer to orders --> Stream<List<Order>>
+customers.stream()
+	.map(Customer::getOrders) // function<Customer,List<Order>>
+    .map(order -> order)
+    .forEach(System.out::println);
+```
+But this prints it grouped by customer as follows
+```
+[Order{id=1}, Order{id=2}, Order{id=3}]
+[Order{id=4}, Order{id=5}]
+[]
+```
+Streaming the orders again
+
+```java
+customers.stream()
+	.map(customer -> customer.getOrders().stream()) //returns Stream<Stream<Order>
+    .forEach(System.out::println);
+```
+
+The above only prints Stream object ids.
+```
+java.util.stream.ReferencePipeline$Head@33e5ccce
+java.util.stream.ReferencePipeline$Head@5a42bbf4
+java.util.stream.ReferencePipeline$Head@270421f5
+```
+
+Only way to flatten it out is to use a flatMap.
+
+```java
+customers.stream()
+    .flatMap(customer -> customer.getOrders().stream()) // function<Customer,Stream<Order>>
+    .forEach(System.out::println);
+```
+
+Prints as expected
+
+```
+Order{id=1}
+Order{id=2}
+Order{id=3}
+Order{id=4}
+Order{id=5}
+```
 
 ## Java Type Annotations
 
