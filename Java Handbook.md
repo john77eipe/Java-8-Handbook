@@ -1,3 +1,15 @@
+Topics Covered:
+
+- Default Methods
+- Lambda Expressions
+- Streams
+- Common UseCases
+- Java Type Annotation
+- Generalized Target Type Inference
+- Optional and Value Types (Monads)
+- Compact Profiles
+- Date and Time API
+
 # Java 8
 
 
