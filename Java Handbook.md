@@ -891,7 +891,7 @@ Sample Terminal stream operations:
 
 
 
-#####Streams vs Collections
+##### Streams vs Collections
 
  A collection is a data structure; its main concern is the organization of data in memory, and a collection persists over a period of time. A collection might often be used as the source or target for a stream pipeline, but a stream's focus is on **computation**, not data.
 
@@ -901,7 +901,7 @@ Operations on collections are eager and mutative; For streams, only the terminal
 
 If the stream is sequential (not parallel) then the ordering is based on the ordering of the source. For eg. In case of SortedMap or ArrayList but in case of HashMap.keySet() the ordering is not garanteed.
 
-#####Parallel Streams
+##### Parallel Streams
 
 If the stream is parallel then it utilizes multiple threads on multiple cores and hence the order is never guaranteed.
 
@@ -950,7 +950,7 @@ A *stream pipeline* is composed of a *stream source*, zero or more *intermediate
 
 
 
-#####Internal representation of a Stream
+##### Internal representation of a Stream
 
 A stream source is described by an abstraction called `Spliterator`. As its name suggests, `Spliterator` combines two behaviors: accessing the elements of the source (iterating), and possibly decomposing the input source for parallel execution (splitting).
 
@@ -979,7 +979,7 @@ For sources whose encounter orders significant (for example, arrays, `List`, or 
 
 
 
-#####Internal representation of a Stream pipeline
+##### Internal representation of a Stream pipeline
 
 A stream pipeline is built by constructing a linked-list representation of the stream source and its intermediate operations. In the internal representation, each stage of the pipeline is described by a bitmap of *stream flags* that describe what's known about the elements at this stage of the stream pipeline.
 
@@ -1014,7 +1014,7 @@ The stream flags for the source stage include `SORTED`, because the source is a 
 
 
 
-#####Internals of a Stream execution
+##### Internals of a Stream execution
 
 Intermediate operations are lazy and terminal operations are eager.
 
@@ -1043,7 +1043,6 @@ Terminal operations are either
 If the terminal operation is non–short-circuiting, the data can be processed in bulk (using the`forEachRemaining()` method of the source spliterator, further reducing the overhead of accessing each element); if it's short-circuiting, it must be processed one element at a time (using `tryAdvance()`).
 
 For sequential execution, Streams constructs a "machine" — a chain of `Consumer` objects whose structure matches that of the pipeline structure. Each of these `Consumer` objects knows about the next stage; when it receives an element (or is notified that there are no more elements), it sends zero or more elements to the next stage in the chain. For example, the `Consumer` associated with a `filter()` stage applies the filter predicate to the input element and either does or doesn't send it on to the next stage; the `Consumer` associated with a `map()` stage applies the mapping function to the input element and sends the result to the next stage. The `Consumer` associated with a stateful operation such as `sorted()` buffers elements until it sees the end of the input, and then it sends the sorted data to the next stage. The final stage in the machine implements the terminal operation. If this operation produces a result, such as `reduce()` or `toArray()`, this stage acts as accumulator for the result.
-
 
 
 **Encounter order**
@@ -1076,7 +1075,7 @@ A similar situation arises when you aggregate with `collect()`. If you execute a
   - These requirements stem in part from the fact that the stream library might, if the pipeline executes in parallel, access the data source or invoke these lambdas concurrently from multiple threads. The restrictions are needed to ensure that the computation remains correct. 
   - Certain reduction operations needs to satisfy associativity principle.
 
-6. Accumulator antipattern
+6. Accumulator antipattern (this is the 6th version; 1 to 5 are discussed above)
 
   - We usually write this code in loops to accumulate values into a single variable. 
 
@@ -1124,7 +1123,7 @@ A similar situation arises when you aggregate with `collect()`. If you execute a
 
 
 
-  ​	This approach can be applied to anything like,
+- This approach can be applied to anything like,
 
   ```java
   Set<String> uniqueStrings = strings.stream()
@@ -1133,13 +1132,12 @@ A similar situation arises when you aggregate with `collect()`. If you execute a
                                               HashSet::addAll);
   ```
 
-  ​		
-
-  The relationship among the three functions passed to `collect()`— creating, populating, and merging result containers — is important enough to be given its own abstraction, `Collector`, along with a corresponding simplified version of `collect()`. 
+ 
+- The relationship among the three functions passed to `collect()`— creating, populating, and merging result containers — is important enough to be given its own abstraction, `Collector`, along with a corresponding simplified version of `collect()`. 
 
  
 
-#####Collectors "utility" class
+##### Collectors "utility" class
 
  In general, collectors can be divided into three broader categories:
 
@@ -1206,7 +1204,7 @@ The above is also a very common example of converting Lists to Maps using lambda
 
 
 
-#####Collector Abstraction
+##### Collector Abstraction
 
 We have already seen how effectively we can convert list of string to another collection using streams.
 
@@ -1256,7 +1254,7 @@ You will notice that Collectors class and in various JDK classes, it will be lit
 
 
 
-#####Collector interface
+##### Collector interface
 
 ```java
 public interface Collector<T, A, R> {
@@ -1285,7 +1283,7 @@ public interface Collector<T, A, R> {
 
 
 
-#####Custom collector
+##### Custom collector
 
 Let's try to build a custom collector for word count.
 
@@ -1413,9 +1411,8 @@ private static class TopWordCollector implements Collector<String, HashMap<Strin
 }
 ```
 
-​	
 
-#####Parallelism
+##### Parallelism
 
 *concurrency* and *parallelism* don't have standard definitions, and they are often (erroneously) used interchangeably. Historically, *concurrency* described a property of a **program**— the degree to which a program is structured as the interaction of cooperating computational activities — whereas *parallelism* was a property of a program's **execution**, describing the degree to which things actually happen simultaneously. (Under this definition, concurrency is the **potential **for parallelism.) This distinction was useful when true concurrent execution was mostly a theoretical concern, but it has become less useful over time.
 
@@ -1427,7 +1424,7 @@ This is why java 8 parallel streams gives you easy parallism but assumes you to 
 
 
 
-#####Using Parallelism carefully
+##### Using Parallelism carefully
 
 The measure of parallel effectiveness, called ***speedup***, is simply the ratio of parallel runtime to sequential runtime. Choosing parallelism (assuming it delivers a speedup) is a deliberate choice to value time over CPU and power utilization. A parallel execution always does more work than a sequential one, since — in addition to solving the problem — it also must decompose the problem, create and manage tasks to describe the subproblems, dispatch and wait for those tasks, and merge their results. So the parallel execution always starts out "behind" the sequential one and hopes to make up for the initial deficit through economy of scale.
 
@@ -1462,7 +1459,7 @@ The result is a dataflow dependency graph like the one shown in Figure 4, in whi
 
 
 
-#####Amdahl's law
+##### Amdahl's law
 
 [Amdahl's law](https://en.wikipedia.org/wiki/Amdahl's_law) describes how the sequential portion of a computation limits the possible parallel speedup. Most problems have some amount of work that cannot be parallelized; this is called the *serial fraction*. For example, if you are going to copy the data from one array to another, the copying might be parallelizable, but the allocation of the target array — which is inherently sequential — must happen before any copying can happen.
 
@@ -1532,7 +1529,7 @@ Several factors that might cause a parallel execution to lose efficiency:
 
 
 
-#####NQ Model
+##### NQ Model
 
 A simple but useful model for parallel performance is the *NQ* model, where *N* is the number of data elements, and *Q* is the amount of work performed per element. The larger the product *N\*Q*, the more likely we are to get a parallel speedup. For problems with trivially small *Q*, such as adding up numbers, you generally want to see *N* > 10,000 to get a speedup; as *Q* increases, the data size required to get a speedup decreases.
 
@@ -2423,7 +2420,7 @@ That's the end of the story and the lesson learnt is to always look for existing
 
 Annotations can be easily recognized in code because the annotation name is prefaced with the `@` character. Annotations have no direct effect on code operation, but at processing time, they can cause an annotation processor to generate files or provide informational messages. 
 
-####What?
+#### What?
 
 In its simplest form, an annotation can be placed in Java source code to indicate that the compiler must perform specific “checking” on the annotated component to ensure that the code conforms to specified rules.
 
@@ -2463,7 +2460,7 @@ Check out: https://checkerframework.org/jsr308/specification/java-annotation-des
 
 Writing your own custom annotations is a whole different discussion for later.
 
-####Why?
+#### Why?
 
 We will see the uses of this feature by considering one of the libraries that uses these features extensively -  checker framework.
 
@@ -2471,13 +2468,13 @@ https://checkerframework.org/
 
 ## Generalized Target Type Inference
 
-####What?
+#### What?
 
 Java 8 supports inference using Target-Type in a method context.
 
  *When we invoke a generic method without explicit type arguments, the compiler can look at the method invocation and corresponding method declarations to determine the type argument (or arguments) that make the invocation applicable.*
 
-####How?
+#### How?
 
 Thee introduction of generics resulted in the necessity of writing boilerplate code due to the need to pass type parameters.
 
@@ -2538,7 +2535,7 @@ But it could be available in future JDKs as the original JEP metions it: https:/
 
 
 
-####Why?
+#### Why?
 
 This is used internally for lambda expressions.
 
@@ -2546,7 +2543,7 @@ This is used internally for lambda expressions.
 
 ## Optional and Value Types
 
-####About Objects Identity and Values
+#### About Objects Identity and Values
 
 
 The Java VM type system offers two ways to create aggregate data types: 
@@ -2578,7 +2575,7 @@ But many programming idioms do not require identity, and would benefit from not 
 
 Note: Even a nominally stateless object (with all final fields) must have its identity tracked at all times, even in highly optimized code, lest someone suddenly use it as a means of synchronization. This inherent “statefulness” impedes many optimizations.  
 
-####Why think about identity?
+#### Why think about identity?
 
 How does identity relate to developing software? Having a solid understanding of what makes two objects identical can be very important to getting an implementation to match the requirements; if two distinct objects in a system represent something the customer considers to be one, problems can arise. 
 
@@ -2869,7 +2866,7 @@ Let's look at few of the value based classes introduced
 
 #### Optional
 
-#####What?
+##### What?
 
 The beauty of Optional is its name.
 
@@ -2922,7 +2919,7 @@ opt.ifPresent( x -> System.out.println("found " + x))
 
 One solution is writing a [new Monad that wraps Optional](https://stackoverflow.com/questions/23773024/functional-style-of-java-8s-optional-ifpresent-and-if-not-present) But I prefer using simple if else.
 
-#####How?
+##### How?
 
 Optional is solely described as a return type for queries to a collection, which was discussed in the context of streams. More precisely, it was needed for those terminal operations which can not return a value if the stream is empty. (Currently those are reduce, min, max, findFirst and findAny.)
 
@@ -2932,10 +2929,7 @@ http://www.oracle.com/technetwork/articles/java/java8-optional-2175753.html
 Java 8 designers designed Optional as a monad.
 
 
-
-#####  
-
-####Short story on Monads
+#### Short story on Monads
 
 - think of that as a design pattern for java developers but it's got a more of a mathematical background
 - creating monads was possible since Java 5 but after version 8 with FP, it has become a lot more easier
@@ -3133,7 +3127,7 @@ It's the composition of two functional idioms: map and flatten.
 
 
 
-####Closures
+#### Closures
 
 Lambda expressions do not depend on anything external; instead, they are content relying on their own parameters and constants. Closures, on the other hand, depend on both parameters and constants, and variables in their lexical scope.
 
@@ -3312,12 +3306,10 @@ They are mutable. As a result, any time you want to give a date back (say, as an
 **5) Not thread safe**
 
 
-
 Extensive list of samples of new DateTime API is  here: https://www.baeldung.com/java-8-date-time-intro
 
 
-
-List of all new features in Java 8:
+Any missed out features in Java 8:
 
 https://www.oracle.com/technetwork/cn/community/developer-day/2-55-new-features-java-se-8-2202551-zhs.pdf
 
