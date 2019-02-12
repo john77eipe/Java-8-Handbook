@@ -2248,12 +2248,14 @@ class Range implements Iterable<Integer> {
 
 
 
-Test runs are as follows:
+We ran test runs with 2 sets of data. Each test should be run individually and not as part of a single whole run (as JVM optimizes and the result might vary).
 
 ```java
+
 //first run
 final static int FACTOR = 1;
 final static int LIMIT = 10000;
+
 //second run
 final static int FACTOR = 9876;
 final static int LIMIT = 1000000;
@@ -2299,7 +2301,121 @@ findingTotalCFSE();
 // 844 ms	
 ```
 
+Observations: 
+- Traditional loop is fast most of the cases.
+- Use parallel streams when performance or IO operations are involved.
+- For simple iterations (involving substitutions or simple numeric calculations) go for traditional loop.
+- Completable Futures with Executor Service is flexible and a go to option when you need more control on the number of threads, etc.
 
+##### 7. Stream operations on Lists
+
+ Situation 1: Need to create a list populated with integers from 0 to 19.
+ 
+ ```java
+ List<Integer> numbers = IntStream.range(0, 20).boxed().collect(Collectors.toList());
+ ```
+
+ Situation 2: Need to remove from the list within stream pipeline.
+ 
+ ```java
+ numbers.forEach(number -> {numbers.remove(number); }); //java.lang.UnsupportedOperationException
+ numbers.removeIf(number -> number>3);  //works
+ ```
+ Situation 3: We need to iterate from 0 to 19 and store the these values in a list and the doubled values in another list
+ 
+ ```java
+List<Integer> list1 = new ArrayList<>();
+List<Integer> list2 =  
+	IntStream.range(0, 20)
+		.boxed()
+		.peek(n -> list1.add(n))
+		.map(n -> n*2)
+		.collect(Collectors.toList());
+
+System.out.println(list1);
+System.out.println(list2);
+//[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+//[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38]
+ ```
+Can we parallize this to achieve better throughput
+
+```java
+List<Integer> list1 = new ArrayList<>();
+List<Integer> list2 = 
+	IntStream.range(0, 20)
+		.parallel()
+		.boxed()
+		.peek(n -> list1.add(n))
+		.map(n -> n*2)
+		.collect(Collectors.toList());
+
+System.out.println(list1);
+System.out.println(list2);
+//[12, 11, 17, 19, 16, 6, 2, 8, 5, 9, 15, 4, 10, 3, 1, 0, 13, 14]
+//[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38]
+```
+It's obvious that some of the values are missing from the first list but the second list is perfect. This is because collect takes care of the parallism and collecting (reducing) the values together. 
+
+Any unsafe operation that is done within the parallel pipeline cannot be guaranteed to execute correctly. Which is exactly the above case.
+
+One way to make this still work is to make list1 a Synchronized List.
+```List<Integer> list1 = Collections.synchronizedList(new ArrayList<>());```
+
+##### 8. Modify a non-Final variable in lambda
+
+A most common scenario that pops up again and again is a requirement to manage an external state within a lambda.
+
+Consider this example
+
+```java
+long sum = 0L;
+final long LIMIT = 10000000L;
+for(long i=1; i<=LIMIT; i++) {
+	sum += i;
+}
+```
+
+A lambda version would be 
+
+```java
+LongStream.rangeClosed(1, LIMIT).forEach(i -> sum += i);
+```
+
+But since sum cannot be final this fails at compilation. 
+
+A Bad trick to achieve this is to use a container like an array or list. We have already seen examples of modifying lists within lambdas.
+
+```java
+long[] sumarr = { 0L }; //stays in heap because it's a array
+final long LIMIT = 10000000L;
+LongStream.rangeClosed(1, LIMIT).forEach(i -> sumarr[0] += i);
+```
+Note that you cannot parallize this operation. Parallel streams will cause the sumarr[0] reference to be over-written by multiple threads.
+
+One solution is 
+
+```java
+AtomicLong sum = new AtomicLong(0); //doing frequent operations on atomic variables are expensive
+LongStream.rangeClosed(1, LIMIT).parallel().forEach(i -> sum.addAndGet(i));
+```
+
+Better solution to Avoid summation by accumulation and instead use summation by reduction (but the operation has to be associative)
+
+```java
+long sumR = LongStream.rangeClosed(1, LIMIT)
+	.parallel()
+	.reduce(0, (i,j) -> i+j); 
+```
+
+But wait there is a method in JDK that does exactly this
+
+```java
+long sumRT = LongStream.rangeClosed(1, LIMIT)
+	.parallel()
+	.sum();	 //built in function appears to be faster than reduce!!!
+```
+
+That's the end of the story and the lesson learnt is to always look for existing APIs within the JDK.
 
 ##Java Type Annotations
 
