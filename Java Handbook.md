@@ -38,7 +38,7 @@
       - [6. Performance impact of lambdas & streams](#6-performance-impact-of-lambdas--streams)
       - [7. Stream operations on Lists](#7-stream-operations-on-lists)
       - [8. Modify a non-Final variable in lambda](#8-modify-a-non-final-variable-in-lambda)
-	  - [9. flatMap vs Map] (#9-flatmap-vs-map)
+      -	[9. flatMap vs Map](#9-flatmap-vs-map)
   - [Java Type Annotations](#java-type-annotations)
     - [Overview of Built-in Annotations in JDK < 1.7](#overview-of-built-in-annotations-in-jdk--17)
     - [What?](#what-3)
