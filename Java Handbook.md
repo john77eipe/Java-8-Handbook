@@ -16,16 +16,16 @@ Topics Covered:
 
 ## Default Methods for Interfaces
 
-#### What?
+### What?
 
 Java 8 enables us to add non-abstract method implementations to interfaces by utilizing the `default` keyword. This feature is also known as [virtual extension methods](http://stackoverflow.com/a/24102730).
 
-#### How?
+### How?
 
 A default method is a method declaration and implementation, and it is denoted with the default keyword preceding the declaration.
 Any class that extends an interface containing a default method can choose to implement and override the default implementation or simply use the default implementation.
 
-#### Why?
+### Why?
 
 Why not simply use abstract classes, rather than default methods? Default methods were added in order to provide a way to change interfaces without breaking backward compatibility. Many interfaces needed to be changed to accommodate Java 8 API updates, and in doing so, these interfaces would possibly break functionality of code that was written for prior releases of Java. 
 
@@ -80,13 +80,13 @@ One approach would be to define default public methods that utilize private stat
 
 ## Lambda Expressions
 
-#### What?
+### What?
 
 Lambda expressions provide a clear and concise way of implementing a single-method interface using an
 expression. They allow you to reduce the amount of code you have to create and maintain. While similar to
 anonymous classes, they have no type information by themselves. Type inference needs to happen.
 
-#### How?
+### How?
 
 Lambdas can only operate on a functional interface, which is an interface with just one abstract method. **Functional interfaces** can have any number of default or static methods. (For this reason, they are sometimes referred to as *Single Abstract Method Interfaces*, or *SAM Interfaces*).
 
@@ -193,13 +193,13 @@ The short answer is **NO**. Java 8 does not use anonymous inner classes mainly f
 1. **Performance impact**: If lambda expressions were implemented using anonymous classes, then each lambda expression would result in a class file on disk. If these classes were loaded by the JVM at startup, then the startup time of the JVM would increase, as all the classes would need to be first loaded and verified before use.
 2. **Possibility to change in future**: If Java 8 designers would have used anonymous classes from the start, then it would have limited the scope of future lambda implementation changes.
 
-##### Using invokedynamic
+#### Using invokedynamic
 
 Java 8 designers decided to use the `invokedynamic` instruction, added in Java 7, to defer the translation strategy at runtime. When `javac` compiles the code, it captures the lambda expression and generates an `invokedynamic` call site (called lambda factory). The `invokedynamic` call site, when invoked, returns an instance of the functional interface to which the lambda is being converted. 
 
 I have only glossed over this topic. You can read about the internals at <http://cr.openjdk.java.net/~briangoetz/lambda/lambda-translation.html>.
 
-#### Why?
+### Why?
 
 The following are the advantages of lambdas which are explained using examples
 
@@ -830,7 +830,7 @@ Although it might not be immediately obvious since the new keyword doesn't appea
 
 ## Streams
 
-#### What?
+### What?
 
 A `java.util.Stream` represents a sequence of elements on which one or more operations can be performed. 
 
@@ -891,7 +891,7 @@ Sample Terminal stream operations:
 
 
 
-##### Streams vs Collections
+#### Streams vs Collections
 
  A collection is a data structure; its main concern is the organization of data in memory, and a collection persists over a period of time. A collection might often be used as the source or target for a stream pipeline, but a stream's focus is on **computation**, not data.
 
@@ -901,7 +901,7 @@ Operations on collections are eager and mutative; For streams, only the terminal
 
 If the stream is sequential (not parallel) then the ordering is based on the ordering of the source. For eg. In case of SortedMap or ArrayList but in case of HashMap.keySet() the ordering is not garanteed.
 
-##### Parallel Streams
+#### Parallel Streams
 
 If the stream is parallel then it utilizes multiple threads on multiple cores and hence the order is never guaranteed.
 
@@ -929,7 +929,7 @@ Note that if you are using a reduction then parallel can be effectively utilized
 
 
 
-#### How?
+### How?
 
 Streams are neither a collection of OBJECTS nor a sequence of OBJECTS.
 It is an abstraction that represents 0 or more VALUES.
@@ -950,7 +950,7 @@ A *stream pipeline* is composed of a *stream source*, zero or more *intermediate
 
 
 
-##### Internal representation of a Stream
+#### Internal representation of a Stream
 
 A stream source is described by an abstraction called `Spliterator`. As its name suggests, `Spliterator` combines two behaviors: accessing the elements of the source (iterating), and possibly decomposing the input source for parallel execution (splitting).
 
@@ -979,7 +979,7 @@ For sources whose encounter orders significant (for example, arrays, `List`, or 
 
 
 
-##### Internal representation of a Stream pipeline
+#### Internal representation of a Stream pipeline
 
 A stream pipeline is built by constructing a linked-list representation of the stream source and its intermediate operations. In the internal representation, each stage of the pipeline is described by a bitmap of *stream flags* that describe what's known about the elements at this stage of the stream pipeline.
 
@@ -1014,7 +1014,7 @@ The stream flags for the source stage include `SORTED`, because the source is a 
 
 
 
-##### Internals of a Stream execution
+#### Internals of a Stream execution
 
 Intermediate operations are lazy and terminal operations are eager.
 
@@ -1060,9 +1060,7 @@ A similar story exists for `distinct()`: If the stream has an encounter order, t
 A similar situation arises when you aggregate with `collect()`. If you execute a `collect(groupingBy())` operation on an ordered stream, the elements corresponding to any key must be presented to the downstream collector in the order in which they appear in the input. Often, this order isn't significant to the application, and any order would do. In these cases, it might be preferable to select a *concurrent* collector (such as `groupingByConcurrent())`, which is allowed to ignore encounter order and let all threads collect directly into a shared concurrent data structure (such as `ConcurrentHashMap`) rather than having each thread collecting into its own intermediate map, and then merging the intermediate maps (which can be expensive).
 
 
-
-#### Why?
-
+### Why?
 
 
 1. Operations defined on the Stream are performed because of the terminal operation.
@@ -1137,7 +1135,7 @@ A similar situation arises when you aggregate with `collect()`. If you execute a
 
  
 
-##### Collectors "utility" class
+#### Collectors "utility" class
 
  In general, collectors can be divided into three broader categories:
 
@@ -1204,7 +1202,7 @@ The above is also a very common example of converting Lists to Maps using lambda
 
 
 
-##### Collector Abstraction
+#### Collector Abstraction
 
 We have already seen how effectively we can convert list of string to another collection using streams.
 
@@ -1254,7 +1252,7 @@ You will notice that Collectors class and in various JDK classes, it will be lit
 
 
 
-##### Collector interface
+#### Collector interface
 
 ```java
 public interface Collector<T, A, R> {
@@ -1283,7 +1281,7 @@ public interface Collector<T, A, R> {
 
 
 
-##### Custom collector
+#### Custom collector
 
 Let's try to build a custom collector for word count.
 
@@ -1412,7 +1410,7 @@ private static class TopWordCollector implements Collector<String, HashMap<Strin
 ```
 
 
-##### Parallelism
+#### Parallelism
 
 *concurrency* and *parallelism* don't have standard definitions, and they are often (erroneously) used interchangeably. Historically, *concurrency* described a property of a **program**— the degree to which a program is structured as the interaction of cooperating computational activities — whereas *parallelism* was a property of a program's **execution**, describing the degree to which things actually happen simultaneously. (Under this definition, concurrency is the **potential **for parallelism.) This distinction was useful when true concurrent execution was mostly a theoretical concern, but it has become less useful over time.
 
@@ -1424,7 +1422,7 @@ This is why java 8 parallel streams gives you easy parallism but assumes you to 
 
 
 
-##### Using Parallelism carefully
+#### Using Parallelism carefully
 
 The measure of parallel effectiveness, called ***speedup***, is simply the ratio of parallel runtime to sequential runtime. Choosing parallelism (assuming it delivers a speedup) is a deliberate choice to value time over CPU and power utilization. A parallel execution always does more work than a sequential one, since — in addition to solving the problem — it also must decompose the problem, create and manage tasks to describe the subproblems, dispatch and wait for those tasks, and merge their results. So the parallel execution always starts out "behind" the sequential one and hopes to make up for the initial deficit through economy of scale.
 
@@ -1459,7 +1457,7 @@ The result is a dataflow dependency graph like the one shown in Figure 4, in whi
 
 
 
-##### Amdahl's law
+#### Amdahl's law
 
 [Amdahl's law](https://en.wikipedia.org/wiki/Amdahl's_law) describes how the sequential portion of a computation limits the possible parallel speedup. Most problems have some amount of work that cannot be parallelized; this is called the *serial fraction*. For example, if you are going to copy the data from one array to another, the copying might be parallelizable, but the allocation of the target array — which is inherently sequential — must happen before any copying can happen.
 
@@ -1529,7 +1527,7 @@ Several factors that might cause a parallel execution to lose efficiency:
 
 
 
-##### NQ Model
+#### NQ Model
 
 A simple but useful model for parallel performance is the *NQ* model, where *N* is the number of data elements, and *Q* is the amount of work performed per element. The larger the product *N\*Q*, the more likely we are to get a parallel speedup. For problems with trivially small *Q*, such as adding up numbers, you generally want to see *N* > 10,000 to get a speedup; as *Q* increases, the data size required to get a speedup decreases.
 
@@ -1628,9 +1626,9 @@ http://gee.cs.oswego.edu/dl/html/StreamParallelGuidance.html
 
 
 
-#### Common Usecases
+### Common Usecases
 
-##### 1. Converting List Objects to Maps
+#### 1. Converting List Objects to Maps
 
    A usuall usecase is the word count which we have already seen
 
@@ -1652,7 +1650,7 @@ http://gee.cs.oswego.edu/dl/html/StreamParallelGuidance.html
    */
    ```
 
-##### 2. Handling of Exceptions
+#### 2. Handling of Exceptions
 
    ```pseudocode
                                        ---> Throwable <--- 
@@ -1982,8 +1980,7 @@ System.out.println(listOfExceptions);
 ```
 
 
-
-##### 3. Converting Optional to a Stream
+#### 3. Converting Optional to a Stream
 
 Yes, this was a small hole in the API, in that it's somewhat  inconvenient to turn an Optional into a zero-or-one length Stream. You  could do this:
 
@@ -1997,7 +1994,7 @@ Optional<Other> result =
 
 There is a solution for this in Java 9.
 
-##### 4. Serializing Lambda
+#### 4. Serializing Lambda
 
 Java 8 introduces the possibility to [cast an object to an intersection of types by adding multiple bounds](http://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.16). In the case of serialization, it is therefore possible to write:
 
@@ -2006,8 +2003,7 @@ Runnable r = (Runnable & Serializable)() -> System.out.println("Serializable!");
 ```
 
 
-
-##### 5. Split Stream
+#### 5. Split Stream
 
 It is not possible to split a stream into 2 separate stream but you can do split operations and continue into a single original stream.
 
@@ -2055,8 +2051,7 @@ class PredicateSplitterFunction<T, R> implements Function<T, R> {
 An example using Consumers is [here](https://stackoverflow.com/questions/19940319/can-you-split-a-stream-into-two-streams)
 
 
-
-##### 6. Performance impact of lambdas & streams
+#### 6. Performance impact of lambdas & streams
 
  Using stream and lambdas for small for loops 
 
@@ -2304,7 +2299,7 @@ Observations:
 - For simple iterations (involving substitutions or simple numeric calculations) go for traditional loop.
 - Completable Futures with Executor Service is flexible and a go to option when you need more control on the number of threads, etc.
 
-##### 7. Stream operations on Lists
+#### 7. Stream operations on Lists
 
  Situation 1: Need to create a list populated with integers from 0 to 19.
  
@@ -2358,7 +2353,7 @@ Any unsafe operation that is done within the parallel pipeline cannot be guarant
 One way to make this still work is to make list1 a Synchronized List.
 ```List<Integer> list1 = Collections.synchronizedList(new ArrayList<>());```
 
-##### 8. Modify a non-Final variable in lambda
+#### 8. Modify a non-Final variable in lambda
 
 A most common scenario that pops up again and again is a requirement to manage an external state within a lambda.
 
@@ -2414,13 +2409,13 @@ long sumRT = LongStream.rangeClosed(1, LIMIT)
 
 That's the end of the story and the lesson learnt is to always look for existing APIs within the JDK.
 
-##Java Type Annotations
+## Java Type Annotations
 
-#### Overview of Built-in Annotations in JDK < 1.7
+### Overview of Built-in Annotations in JDK < 1.7
 
 Annotations can be easily recognized in code because the annotation name is prefaced with the `@` character. Annotations have no direct effect on code operation, but at processing time, they can cause an annotation processor to generate files or provide informational messages. 
 
-#### What?
+### What?
 
 In its simplest form, an annotation can be placed in Java source code to indicate that the compiler must perform specific “checking” on the annotated component to ensure that the code conforms to specified rules.
 
@@ -2431,7 +2426,6 @@ Java comes with a basic set of built-in annotations. The following Java annotati
 - `@SuppressWarnings`: Indicates that if the marked element generates warnings, the compiler should suppress those warnings.
 - `@SafeVarargs`: Indicates that the marked element does not perform potentially unsafe operations via its `varargs` parameter. Causes the compiler to suppress unchecked warnings related to `varargs`.
 - `@FunctionalInterface`: Indicates that the type declaration is intended to be a functional interface. 
-
 
 
 But all the above annotations are for methods/classes. 
@@ -2448,9 +2442,7 @@ ElementType.TYPE_PARAMETER: allows an annotation to be applied at type variables
 `@Target``({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})``public` `@interface` `Test {``}`
 ```
 
-
-
-#### How?
+### How?
 
 Please note that the annotations from the below examples will not work out of the box when Java 8 is released. Java 8 only provides the ability to define these types of annotations. It is then up to framework and tool developers to actually make use of it. 
 
@@ -2460,7 +2452,7 @@ Check out: https://checkerframework.org/jsr308/specification/java-annotation-des
 
 Writing your own custom annotations is a whole different discussion for later.
 
-#### Why?
+### Why?
 
 We will see the uses of this feature by considering one of the libraries that uses these features extensively -  checker framework.
 
@@ -2468,13 +2460,13 @@ https://checkerframework.org/
 
 ## Generalized Target Type Inference
 
-#### What?
+### What?
 
 Java 8 supports inference using Target-Type in a method context.
 
  *When we invoke a generic method without explicit type arguments, the compiler can look at the method invocation and corresponding method declarations to determine the type argument (or arguments) that make the invocation applicable.*
 
-#### How?
+### How?
 
 Thee introduction of generics resulted in the necessity of writing boilerplate code due to the need to pass type parameters.
 
@@ -2535,7 +2527,7 @@ But it could be available in future JDKs as the original JEP metions it: https:/
 
 
 
-#### Why?
+### Why?
 
 This is used internally for lambda expressions.
 
@@ -2543,7 +2535,7 @@ This is used internally for lambda expressions.
 
 ## Optional and Value Types
 
-#### About Objects Identity and Values
+### About Objects Identity and Values
 
 
 The Java VM type system offers two ways to create aggregate data types: 
@@ -2820,8 +2812,7 @@ All in all if you are not carefully designing builder pattern, you can run into 
 A lasting solution is to have value types.
 
 
-
-#### Value Types and Value Based Classes
+### Value Types and Value Based Classes
 
 Value Types are the solution for the above problem. 
 
@@ -2861,12 +2852,11 @@ Instances of a value-based class:
 - Use of identity-sensitive operations (like == or synchronisation) on instances of value-based classes may have unpredictable effects and should be avoided.
 
 
-
 Let's look at few of the value based classes introduced
 
-#### Optional
+## Optional
 
-##### What?
+### What?
 
 The beauty of Optional is its name.
 
@@ -2874,7 +2864,7 @@ The beauty of Optional is its name.
 java.util.Optional<T> //FailSafe using Optional
 ```
 
-##### Why?
+### Why?
 
 ```java
 String name = "abc";
@@ -2919,7 +2909,7 @@ opt.ifPresent( x -> System.out.println("found " + x))
 
 One solution is writing a [new Monad that wraps Optional](https://stackoverflow.com/questions/23773024/functional-style-of-java-8s-optional-ifpresent-and-if-not-present) But I prefer using simple if else.
 
-##### How?
+### How?
 
 Optional is solely described as a return type for queries to a collection, which was discussed in the context of streams. More precisely, it was needed for those terminal operations which can not return a value if the stream is empty. (Currently those are reduce, min, max, findFirst and findAny.)
 
@@ -3027,7 +3017,7 @@ https://afcastano.com/
 
 
 
-##### Back to Optional 
+#### Back to Optional 
 
 Let's look back at Optional with the knowledge that it's a monad ;-)
 
