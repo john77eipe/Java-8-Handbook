@@ -109,7 +109,7 @@ For e.g. In Map Interface there are quite some default methods added like
 Advantage:
 
 - **static Method:** You don't need to create separate class for utility method.
-- **default Method:**Provide the common funtionality in default method.
+- **default Method:** Provide the common funtionality in default method.
 
 
 
@@ -472,7 +472,7 @@ For simplicity let's assume that the mathematical operation is addition.
 
 
 
-  - Level 1
+  ####  Level 1
 
   Client code -> creates a list of integers, filters it based on a condition, sends them to Vendor for calculation
 
@@ -513,7 +513,7 @@ For simplicity let's assume that the mathematical operation is addition.
 
 
 
-  - Level 2
+  #### Level 2
 
   A better way would be if they collaborate and agree on a contract. In the Java world, contract is through interfaces.
 
@@ -570,7 +570,7 @@ For simplicity let's assume that the mathematical operation is addition.
 
 
 
-  - Level 3
+  #### Level 3
 
   Let's say the Vendor now get's requests to handle different types of numerics.
 
@@ -614,7 +614,7 @@ class MathUtility<T extends Number> {
 
 
 
-  - Level 4
+  #### Level 4
 
   Final improvments using lambdas.
 
@@ -1184,7 +1184,7 @@ A similar situation arises when you aggregate with `collect()`. If you execute a
                                               HashSet::addAll);
   ```
 
- 
+
 - The relationship among the three functions passed to `collect()`— creating, populating, and merging result containers — is important enough to be given its own abstraction, `Collector`, along with a corresponding simplified version of `collect()`. 
 
  
@@ -2356,19 +2356,19 @@ Observations:
 #### 7. Stream operations on Lists
 
  Situation 1: Need to create a list populated with integers from 0 to 19.
- 
+
  ```java
  List<Integer> numbers = IntStream.range(0, 20).boxed().collect(Collectors.toList());
  ```
 
  Situation 2: Need to remove from the list within stream pipeline.
- 
+
  ```java
  numbers.forEach(number -> {numbers.remove(number); }); //java.lang.UnsupportedOperationException
  numbers.removeIf(number -> number>3);  //works
  ```
  Situation 3: We need to iterate from 0 to 19 and store the these values in a list and the doubled values in another list
- 
+
  ```java
 List<Integer> list1 = new ArrayList<>();
 List<Integer> list2 =  
