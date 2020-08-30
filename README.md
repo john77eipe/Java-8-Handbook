@@ -3460,3 +3460,6 @@ Any missed out features in Java 8:
 
 https://www.oracle.com/technetwork/cn/community/developer-day/2-55-new-features-java-se-8-2202551-zhs.pdf
 
+## More Samples/Exercises
+
+1. https://dzone.com/articles/refactoring-java-8-code-with-collector (https://github.com/surajcm/java_fun_extraction_01)
