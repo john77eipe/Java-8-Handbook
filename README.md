@@ -472,7 +472,7 @@ For simplicity let's assume that the mathematical operation is addition.
 
 
 
-  ####  Level 1
+  ####  Usecase impl at Level 1
 
   Client code -> creates a list of integers, filters it based on a condition, sends them to Vendor for calculation
 
@@ -513,7 +513,7 @@ For simplicity let's assume that the mathematical operation is addition.
 
 
 
-  #### Level 2
+  #### Usecase impl at Level 2
 
   A better way would be if they collaborate and agree on a contract. In the Java world, contract is through interfaces.
 
@@ -570,7 +570,7 @@ For simplicity let's assume that the mathematical operation is addition.
 
 
 
-  #### Level 3
+  #### Usecase impl at Level 3
 
   Let's say the Vendor now get's requests to handle different types of numerics.
 
@@ -614,7 +614,7 @@ class MathUtility<T extends Number> {
 
 
 
-  #### Level 4
+  #### Usecase impl at Level 4
 
   Final improvments using lambdas.
 
@@ -1590,6 +1590,8 @@ Many of the impediments to parallelism — such as splitting cost, combining cos
 
 
 Going back to the usecase that we discussed in lambda's section 5.
+
+#### Usecase impl at Level 5
 
 The code can now utilise parallel streams.
 
@@ -3455,11 +3457,10 @@ They are mutable. As a result, any time you want to give a date back (say, as an
 
 Extensive list of samples of new DateTime API is  here: https://www.baeldung.com/java-8-date-time-intro
 
-
-Any missed out features in Java 8:
-
+## Extras
+Any feature that is missed out is available here:
 https://www.oracle.com/technetwork/cn/community/developer-day/2-55-new-features-java-se-8-2202551-zhs.pdf
 
 ## More Samples/Exercises
 
-1. https://dzone.com/articles/refactoring-java-8-code-with-collector (https://github.com/surajcm/java_fun_extraction_01)
+- https://dzone.com/articles/refactoring-java-8-code-with-collector (https://github.com/surajcm/java_fun_extraction_01)
