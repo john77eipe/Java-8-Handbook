@@ -3464,3 +3464,4 @@ https://www.oracle.com/technetwork/cn/community/developer-day/2-55-new-features-
 ## More Samples/Exercises
 
 - https://dzone.com/articles/refactoring-java-8-code-with-collector (https://github.com/surajcm/java_fun_extraction_01)
+- https://gitlab.com/pravin/understanding-and-using-collectors/-/tree/master
