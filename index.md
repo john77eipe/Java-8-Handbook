@@ -192,7 +192,7 @@ I have only glossed over this topic. You can read about the internals at <http:/
 
 The following are the advantages of lambdas which are explained using examples
 
-1. Already existing interfaces became smarter
+#### 1. Already existing interfaces became smarter
 
    ```java
    Runnable r1 = new Runnable() {
@@ -206,9 +206,9 @@ The following are the advantages of lambdas which are explained using examples
    ```
 
 
-2. Reduced Lines of code
+#### 2. Reduced Lines of code
 
-3. Predefined Functional Interfaces from the JDK for most of the common use cases.
+#### 3. Predefined Functional Interfaces from the JDK for most of the common use cases.
 
    Remember I had to write an interface called SingleLiner above just to get that piece of lambda code working.
 
@@ -283,7 +283,7 @@ The following are the advantages of lambdas which are explained using examples
    System.out.println(lambda.apply(3));
    ```
 
-4. Advanced loops - true internal interators
+#### 4. Advanced loops - true internal interators
 
    ```java
    List<Integer> numbers = Arrays.asList(2,3,4,5);
@@ -381,7 +381,7 @@ for(Integer number: numbers){
 numbers.forEach(number-> { number = number.intValue()-1; });
 ```
 
-​	The only approach that works is through Iterators. 
+  The only approach that works is through Iterators. 
 
 ```java
 Iterator<Integer> it = numbers.iterator();
@@ -393,11 +393,11 @@ Iterator<Integer> it = numbers.iterator();
 	}
 ```
 
-​	The only down-side of this approach is that you need to switch your for-each to a while. However, this approach is the most efficient one, especially for LinkedList where it is O(n) (it's O(n2) for ArrayList because it has to copy array data on each remove(index) call). 
+   The only down-side of this approach is that you need to switch your for-each to a while. However, this approach is the most efficient one, especially for LinkedList where it is O(n) (it's O(n2) for ArrayList because it has to copy array data on each remove(index) call). 
 
 Ref: https://stackoverflow.com/questions/6101789/why-does-javas-arraylists-remove-function-seem-to-cost-so-little
 
-5. Passing behaviours into methods
+#### 5. Passing behaviours into methods
 
 Let's consider a scenario of a client writing a program to do some complex mathematical operation on a set of Integers but based on some condition.
 
@@ -407,7 +407,7 @@ For simplicity let's assume that the mathematical operation is addition.
 
 
 
-  ####  Usecase impl at Level 1
+  **Usecase impl at Level 1**
 
   Client code -> creates a list of integers, filters it based on a condition, sends them to Vendor for calculation
 
@@ -448,7 +448,7 @@ For simplicity let's assume that the mathematical operation is addition.
 
 
 
-  #### Usecase impl at Level 2
+  **Usecase impl at Level 2**
 
   A better way would be if they collaborate and agree on a contract. In the Java world, contract is through interfaces.
 
@@ -505,7 +505,7 @@ For simplicity let's assume that the mathematical operation is addition.
 
 
 
-  #### Usecase impl at Level 3
+  **Usecase impl at Level 3**
 
   Let's say the Vendor now get's requests to handle different types of numerics.
 
@@ -549,7 +549,7 @@ class MathUtility<T extends Number> {
 
 
 
-  #### Usecase impl at Level 4
+  **Usecase impl at Level 4**
 
   Final improvments using lambdas.
 
@@ -567,7 +567,7 @@ class MathUtility<T extends Number> {
 
 
 
-6. Sorting becomes cleaner
+#### 6. Sorting becomes cleaner
 
 Consider another example.
 
@@ -605,7 +605,7 @@ Collections.sort(
 
 
 
-7. Method references
+#### 7. Method references
 
 Instance method reference (to an arbitrary instance) 
 
@@ -641,7 +641,7 @@ strings.stream().map(s -> new Integer(s));
 
 
 
-8. Type of Lambda Expression
+#### 8. Type of Lambda Expression
 
 A lambda expression, by itself, does not have a specific type. The lambda receives a type when it is assigned to a functional interface. 
 
@@ -657,7 +657,7 @@ com.google.common.base.Predicate<String> guavaPredicate = o -> o.isEmpty();
 
 
 
-9. Implementing multiple interfaces
+#### 9. Implementing multiple interfaces
 
 Sometimes you may want to have a lambda expression implementing more than one interface.
 
@@ -670,7 +670,7 @@ For example, you want to create a TreeSet with a custom Comparator and then seri
 
 If you haven't heard of intersection types in java: http://iteratrlearning.com/java/generics/2016/05/12/intersection-types-java-generics.html
 
-10. Lamdba Closures
+#### 10. Lamdba Closures
 
 A lambda closure is created when a lambda expression references the variables of an enclosing scope (global or local). The rules for doing this are the same as those for inline methods and anonymous classes.
 
@@ -797,7 +797,7 @@ public class Accumulator {
 
 
 
-11. Lambdas and memory utilization
+#### 11. Lambdas and memory utilization
 
     Be aware that some lambdas are stateless eg. `Consumer c = (s)->s.length()` where some are stateful
 
@@ -1526,7 +1526,7 @@ Many of the impediments to parallelism — such as splitting cost, combining cos
 
 Going back to the usecase that we discussed in lambda's section 5.
 
-#### Usecase impl at Level 5
+**Usecase impl at Level 5**
 
 The code can now utilise parallel streams.
 
@@ -1895,9 +1895,9 @@ http://gee.cs.oswego.edu/dl/html/StreamParallelGuidance.html
 
    Not advised to modify a datastructure within a lambda expression but this is one exception ;-).
 
-Approach 2:
+   Approach 2:
 
-Another approach is to extend an appropriate Funtional interface, in this case map on an IntStream requires IntUnaryOperator expression.
+   Another approach is to extend an appropriate Funtional interface, in this case map on an IntStream requires IntUnaryOperator expression.
 
 
 
@@ -1933,9 +1933,9 @@ System.out.println(IntUnaryOperatorWithException.listOfExceptions);
 
 This is a favored approach because we now have a reusable functional interface and the exception handling code has been moved out.  The same approach can be used to extend any other type of functional interface lilke Function, Consumer, etc.
 
-Approach 3:
+  Approach 3:
 
-Write your own Functional interface that allows exceptions then write a wrapper funciton in your code that handler exception.
+  Write your own Functional interface that allows exceptions then write a wrapper funciton in your code that handler exception.
 
 
 
