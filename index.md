@@ -22,6 +22,7 @@ By adding default methods to interfaces, engineers were able to add new function
 
 For e.g. In Map Interface there are quite some default methods added like 
 
+
 > V java.util.Map.putIfAbsent(K key, V value)
 >
 > If the specified key is not already associated with a value (or is mapped to null) associates it with the given value and returns null, else returns the current value.
@@ -102,7 +103,7 @@ interface Foo6 {
 
 Structure of Lambda expression is: 
 
-​			(Method signature) -> Method Implementation
+​      `(Method signature) -> Method Implementation`
 
 But does that mean we can define and invoke any piece of code as we please
 
@@ -163,14 +164,14 @@ Notes:
 
 - If the code placed inside a lambda is a java expression rather than a statement then the return keyword can be omitted and it implicitely means that it returns a value.
 
-```java
-@FunctionalInterface
-interface SingleLiner {
-	int doSomething(int n);
-}
-SingleLiner singleLineCode = (x) -> (x+1); //same as { return (x+1); } 
-singleLineCode.doSomething(3);
-```
+  ```java
+  @FunctionalInterface
+  interface SingleLiner {
+    int doSomething(int n);
+  }
+  SingleLiner singleLineCode = (x) -> (x+1); //same as { return (x+1); } 
+  singleLineCode.doSomething(3);
+  ```
 
 - follow the same rules for accessing local variables in the enclosing scope; the variables must be treated as final (implicitly final) and not modified inside the lambda.
 
@@ -207,6 +208,8 @@ The following are the advantages of lambdas which are explained using examples
 
 
 #### 2. Reduced Lines of code
+
+  Lambdas provided a neat mechanism to express your code thus reducing the number of lines of code needed.
 
 #### 3. Predefined Functional Interfaces from the JDK for most of the common use cases.
 
@@ -372,26 +375,26 @@ The following are the advantages of lambdas which are explained using examples
 
    So is the case with lambdas too.
 
-```java
-for(Integer number: numbers){
-	number = number-1;	//these changes are lost
-}
+  ```java
+  for(Integer number: numbers){
+    number = number-1;	//these changes are lost
+  }
 
-//lamdbas provide you with immutables and hence the changes are lost
-numbers.forEach(number-> { number = number.intValue()-1; });
-```
+  //lamdbas provide you with immutables and hence the changes are lost
+  numbers.forEach(number-> { number = number.intValue()-1; });
+  ```
 
   The only approach that works is through Iterators. 
 
-```java
-Iterator<Integer> it = numbers.iterator();
-	while (it.hasNext()) {
-		Integer integer = it.next();
-		if (integer < 3) {
-		    it.remove();
-		 }
-	}
-```
+  ```java
+  Iterator<Integer> it = numbers.iterator();
+    while (it.hasNext()) {
+      Integer integer = it.next();
+      if (integer < 3) {
+          it.remove();
+      }
+    }
+  ```
 
    The only down-side of this approach is that you need to switch your for-each to a while. However, this approach is the most efficient one, especially for LinkedList where it is O(n) (it's O(n2) for ArrayList because it has to copy array data on each remove(index) call). 
 
@@ -399,11 +402,11 @@ Ref: https://stackoverflow.com/questions/6101789/why-does-javas-arraylists-remov
 
 #### 5. Passing behaviours into methods
 
-Let's consider a scenario of a client writing a program to do some complex mathematical operation on a set of Integers but based on some condition.
+  Let's consider a scenario of a client writing a program to do some complex mathematical operation on a set of Integers but based on some condition.
 
-Let's say that the client doesn't have the time nor the skill to invest in doing the operation so he get's it from a Vendor.
+  Let's say that the client doesn't have the time nor the skill to invest in doing the operation so he get's it from a Vendor.
 
-For simplicity let's assume that the mathematical operation is addition.
+  For simplicity let's assume that the mathematical operation is addition.
 
 
 
@@ -458,7 +461,6 @@ For simplicity let's assume that the mathematical operation is addition.
   interface ConditionCheck {
   	public boolean check(Integer i);
   }
-  
   ```
 
   Vendor code
@@ -512,26 +514,26 @@ For simplicity let's assume that the mathematical operation is addition.
   Vendor code
 
   ```java
-//Generics into the mix :)  
-class MathUtility<T extends Number> {
-  	public static <T extends Number> Number sum(List<T> list, ConditionCheck<T> condition){
-  		//ability to add is only here
-  		
-  		Number sum = 0;
-  		for(T i: list){
-  			if(condition.check(i)){
-  				if (i instanceof Integer) {
-  					sum=sum.intValue()+i.intValue();
-  				}
-  				if(i instanceof Double) {
-  					sum=sum.doubleValue()+i.doubleValue();
-  				}
-  				//so on
-  			}
-  		}
-  		return sum;
-  	}
-  }
+  //Generics into the mix :)  
+  class MathUtility<T extends Number> {
+      public static <T extends Number> Number sum(List<T> list, ConditionCheck<T> condition){
+        //ability to add is only here
+        
+        Number sum = 0;
+        for(T i: list){
+          if(condition.check(i)){
+            if (i instanceof Integer) {
+              sum=sum.intValue()+i.intValue();
+            }
+            if(i instanceof Double) {
+              sum=sum.doubleValue()+i.doubleValue();
+            }
+            //so on
+          }
+        }
+        return sum;
+      }
+    }
   ```
 
   Client code
@@ -569,231 +571,231 @@ class MathUtility<T extends Number> {
 
 #### 6. Sorting becomes cleaner
 
-Consider another example.
+  Consider another example.
 
-Pre java 8 style
+  Pre java 8 style
 
-```java
-List<Person> people = ...
-Collections.sort(
-    people,
-    new Comparator<Person>() {
-        public int compare(Person p1, Person p2){
-            return p1.getFirstName().compareTo(p2.getFirstName());
-        } 
-  	}
-);
-```
+  ```java
+  List<Person> people = ...
+  Collections.sort(
+      people,
+      new Comparator<Person>() {
+          public int compare(Person p1, Person p2){
+              return p1.getFirstName().compareTo(p2.getFirstName());
+          } 
+      }
+  );
+  ```
 
-Starting with Java 8, the anonymous class can be replaced with a lambda expression.
+  Starting with Java 8, the anonymous class can be replaced with a lambda expression.
 
-```java
-Collections.sort(
-    people,
-    (p1, p2) -> p1.getFirstName().compareTo(p2.getFirstName())
-);
-```
+  ```java
+  Collections.sort(
+      people,
+      (p1, p2) -> p1.getFirstName().compareTo(p2.getFirstName())
+  );
+  ```
 
-Further simplified using Comparator.comparing.
+  Further simplified using Comparator.comparing.
 
-```java
-Collections.sort(
-    people,
-    Comparator.comparing(Person::getFirstName)
-);
-```
+  ```java
+  Collections.sort(
+      people,
+      Comparator.comparing(Person::getFirstName)
+  );
+  ```
 
 
 
 #### 7. Method references
 
-Instance method reference (to an arbitrary instance) 
+  Instance method reference (to an arbitrary instance) 
 
-```java
-people.stream().map(Person::getName) 
-//The equivalent lambda: 
-people.stream().map(person -> person.getName())
-```
+  ```java
+  people.stream().map(Person::getName) 
+  //The equivalent lambda: 
+  people.stream().map(person -> person.getName())
+  ```
 
- Instance method reference (to a specific instance) 
+  Instance method reference (to a specific instance) 
 
-```java
-people.forEach(System.out::println);
-//The equivalent lambda: 
-people.forEach(person -> System.out.println(person)); 
-```
+  ```java
+  people.forEach(System.out::println);
+  //The equivalent lambda: 
+  people.forEach(person -> System.out.println(person)); 
+  ```
 
-Static method reference
+  Static method reference
 
-```java
-numbers.stream().map(String::valueOf)
-//The equivalent lambda:
-numbers.stream().map(num -> String.valueOf(num))
-```
+  ```java
+  numbers.stream().map(String::valueOf)
+  //The equivalent lambda:
+  numbers.stream().map(num -> String.valueOf(num))
+  ```
 
-Reference to constructor
+  Reference to constructor
 
-```java
-strings.stream().map(Integer::new)
-//The equivalent lambda:
-strings.stream().map(s -> new Integer(s));
-```
+  ```java
+  strings.stream().map(Integer::new)
+  //The equivalent lambda:
+  strings.stream().map(s -> new Integer(s));
+  ```
 
 
 
 #### 8. Type of Lambda Expression
 
-A lambda expression, by itself, does not have a specific type. The lambda receives a type when it is assigned to a functional interface. 
+  A lambda expression, by itself, does not have a specific type. The lambda receives a type when it is assigned to a functional interface. 
 
-To illustrate, consider the lambda expression` o -> o.isEmpty()`. The same lambda expression can be assigned to many different functional types:
+  To illustrate, consider the lambda expression` o -> o.isEmpty()`. The same lambda expression can be assigned to many different functional types:
 
-```java
-Predicate<String> javaStringPred = o -> o.isEmpty();
-Function<String, Boolean> javaFunc = o -> o.isEmpty();
-Predicate<List> javaListPred = o -> o.isEmpty();
-Consumer<String> javaStringConsumer = o -> o.isEmpty(); //return value is ignored
-com.google.common.base.Predicate<String> guavaPredicate = o -> o.isEmpty();
-```
+  ```java
+  Predicate<String> javaStringPred = o -> o.isEmpty();
+  Function<String, Boolean> javaFunc = o -> o.isEmpty();
+  Predicate<List> javaListPred = o -> o.isEmpty();
+  Consumer<String> javaStringConsumer = o -> o.isEmpty(); //return value is ignored
+  com.google.common.base.Predicate<String> guavaPredicate = o -> o.isEmpty();
+  ```
 
 
 
 #### 9. Implementing multiple interfaces
 
-Sometimes you may want to have a lambda expression implementing more than one interface.
+  Sometimes you may want to have a lambda expression implementing more than one interface.
 
-For example, you want to create a TreeSet with a custom Comparator and then serialize it and send it over the network. The trivial approach: 
+  For example, you want to create a TreeSet with a custom Comparator and then serialize it and send it over the network. The trivial approach: 
 
-`TreeSet<Long> ts = new TreeSet<>((x, y) -> Long.compare(y, x));`
- doesn't work since the lambda for the comparator does not implement Serializable. You can fix this by using intersection types and explicitly specifying that this lambda needs to be serializable: 
+  `TreeSet<Long> ts = new TreeSet<>((x, y) -> Long.compare(y, x));`
+  doesn't work since the lambda for the comparator does not implement Serializable. You can fix this by using intersection types and explicitly specifying that this lambda needs to be serializable: 
 
-`TreeSet<Long> ts = new TreeSet<>((Comparator<Long> & Serializable) (x, y) -> Long.compare(y, x));`
+  `TreeSet<Long> ts = new TreeSet<>((Comparator<Long> & Serializable) (x, y) -> Long.compare(y, x));`
 
-If you haven't heard of intersection types in java: http://iteratrlearning.com/java/generics/2016/05/12/intersection-types-java-generics.html
+  If you haven't heard of intersection types in java: http://iteratrlearning.com/java/generics/2016/05/12/intersection-types-java-generics.html
 
 #### 10. Lamdba Closures
 
-A lambda closure is created when a lambda expression references the variables of an enclosing scope (global or local). The rules for doing this are the same as those for inline methods and anonymous classes.
+  A lambda closure is created when a lambda expression references the variables of an enclosing scope (global or local). The rules for doing this are the same as those for inline methods and anonymous classes.
 
-Local variables from an enclosing scope that are used within a lambda have to be final or effectively final.
+  Local variables from an enclosing scope that are used within a lambda have to be final or effectively final.
 
-```java
-int n=0; 
-Runnable r3 = () -> {
-	//n = n+1; //compile error
-	//Local variable n defined in an enclosing scope must be final/effectively final
-	System.out.println("My Runnable"+ n);
-};
+  ```java
+  int n=0; 
+  Runnable r3 = () -> {
+    //n = n+1; //compile error
+    //Local variable n defined in an enclosing scope must be final/effectively final
+    System.out.println("My Runnable"+ n);
+  };
 
-r3.run();
-```
+  r3.run();
+  ```
 
-What happens if I use Integer instead of int?
+  What happens if I use Integer instead of int?
 
-The behaviour will be same as above as reassigning the original reference (to Integer) is not allowed.
+  The behaviour will be same as above as reassigning the original reference (to Integer) is not allowed.
 
-The below is also not feasible.
+  The below is also not feasible.
 
-```java
-Integer n=0; 
-Runnable r3 = () -> {
-	int i = n.intValue();
-	i++;
-	//n.setValue(i); //not feasible; wrapper classes are immutable
-	System.out.println("My Runnable"+ n);
-};
+  ```java
+  Integer n=0; 
+  Runnable r3 = () -> {
+    int i = n.intValue();
+    i++;
+    //n.setValue(i); //not feasible; wrapper classes are immutable
+    System.out.println("My Runnable"+ n);
+  };
 
-r3.run();
-```
+  r3.run();
+  ```
 
-One solution is to use a copy variable.
+  One solution is to use a copy variable.
 
-```java
-int n=0; 
-Runnable r3 = () -> {
-	int i =n;
-	i = i+1;
-	System.out.println("My Runnable"+ i);
-};
+  ```java
+  int n=0; 
+  Runnable r3 = () -> {
+    int i =n;
+    i = i+1;
+    System.out.println("My Runnable"+ i);
+  };
 
-r3.run();
-```
+  r3.run();
+  ```
 
-Another solution is to use a state variable.
+  Another solution is to use a state variable.
 
-```java
-//legal but not safe
-Obj obj = new Obj();
-obj.n=0;
-Runnable r3 = () -> {
-	Obj temp = obj;
-	temp.n = temp.n+1;
-	System.out.println("My Runnable"+ temp.n);
-};
+  ```java
+  //legal but not safe
+  Obj obj = new Obj();
+  obj.n=0;
+  Runnable r3 = () -> {
+    Obj temp = obj;
+    temp.n = temp.n+1;
+    System.out.println("My Runnable"+ temp.n);
+  };
 
-r3.run();
-```
+  r3.run();
+  ```
 
-The above works as the object reference is not touched within the lambda scope.
+  The above works as the object reference is not touched within the lambda scope.
 
-```java
-// Same as above --> legal, but not safe
-List<Integer> evenLengths = new ArrayList<>();
-evenLengths.stream()
-    .filter(s -> s.length() % 2 == 0)
-    .forEach(evenLengths::add);
-System.out.println("Using add: " + evenLengths);
-```
+  ```java
+  // Same as above --> legal, but not safe
+  List<Integer> evenLengths = new ArrayList<>();
+  evenLengths.stream()
+      .filter(s -> s.length() % 2 == 0)
+      .forEach(evenLengths::add);
+  System.out.println("Using add: " + evenLengths);
+  ```
 
-Another solution is if we are using instance or static variables - it works.
+  Another solution is if we are using instance or static variables - it works.
 
-```java
-// Does not compile ...
-public IntUnaryOperator createAccumulator() { 
-    int value = 0;
-	IntUnaryOperator accumulate = (x) -> { value += x; return value; };
-	return accumulate;
-}
-```
+  ```java
+  // Does not compile ...
+  public IntUnaryOperator createAccumulator() { 
+      int value = 0;
+    IntUnaryOperator accumulate = (x) -> { value += x; return value; };
+    return accumulate;
+  }
+  ```
 
-But,
+  But,
 
-```java
-// Compiles, but is incorrect ...
-public class AccumulatorGenerator { 
-    private int value = 0;
-	public IntUnaryOperator createAccumulator() {
-	IntUnaryOperator accumulate = (x) -> { value += x; return value; }; return accumulate;
-	} 
-}
-```
+  ```java
+  // Compiles, but is incorrect ...
+  public class AccumulatorGenerator { 
+      private int value = 0;
+    public IntUnaryOperator createAccumulator() {
+    IntUnaryOperator accumulate = (x) -> { value += x; return value; }; return accumulate;
+    } 
+  }
+  ```
 
 
 
-Why does it work and why isn't it not a good practice?
+  **Why does it work and why isn't it not a good practice?**
 
-To understand, we need to see why the language doesn't allow non-final local variables.
+  To understand, we need to see why the language doesn't allow non-final local variables.
 
-The local variable is **copied ** when JVM creates a lambda instance. Since it's a copy that the lambda is working on (and there might be multiple threads running the same lambda code), there is no way to tell that lambda expression body is not working on a stale copy of the variable unless it is kept final or effectively final.
+  The local variable is **copied ** when JVM creates a lambda instance. Since it's a copy that the lambda is working on (and there might be multiple threads running the same lambda code), there is no way to tell that lambda expression body is not working on a stale copy of the variable unless it is kept final or effectively final.
 
-Now, in case of instance fields, when you access an instance field inside the lambda expression then compiler will append a `this` to that variable access (if you have not done it explicitly) and since `this` is effectively final so compiler is sure that lambda expression body will always have the latest copy of the variable (please note that multi-threading is out of scope right now for this discussion). 
+  Now, in case of instance fields, when you access an instance field inside the lambda expression then compiler will append a `this` to that variable access (if you have not done it explicitly) and since `this` is effectively final so compiler is sure that lambda expression body will always have the latest copy of the variable (please note that multi-threading is out of scope right now for this discussion). 
 
-Note that the case of `this` and also `obj`, the JVM is creating a copy just like in local variable case but it's just that the copy is the object reference.
+  Note that the case of `this` and also `obj`, the JVM is creating a copy just like in local variable case but it's just that the copy is the object reference.
 
-If the *synchronization* required in **instance mutation**, you can use directly the [stream reduction methods](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html) or if there is dependency issue in instance mutation, you still can use `thenApply` or `thenCompose` in [Function](https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html) while `mapping` or methods similar.
+  If the *synchronization* required in **instance mutation**, you can use directly the [stream reduction methods](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html) or if there is dependency issue in instance mutation, you still can use `thenApply` or `thenCompose` in [Function](https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html) while `mapping` or methods similar.
 
-More: https://stackoverflow.com/questions/25055392/lambdas-local-variables-need-final-instance-variables-dont
+  More: https://stackoverflow.com/questions/25055392/lambdas-local-variables-need-final-instance-variables-dont
 
-Better approach would be to use regular classes when playing with mutable states.
+  Better approach would be to use regular classes when playing with mutable states.
 
-```java
-// Correct ...
-public class Accumulator { 
-    private int value = 0;
-	public int accumulate(int x) { value += x;
-		return value; 
-    }
-}
-```
+  ```java
+  // Correct ...
+  public class Accumulator { 
+      private int value = 0;
+    public int accumulate(int x) { value += x;
+      return value; 
+      }
+  }
+  ```
 
 
 
@@ -805,15 +807,15 @@ public class Accumulator {
 
     Another example of stateful.
 
-```java
-for(int i=0; i<1,000,000,000; i++) {
-	int j=i;
-	Supplier<Integer> comsumer = () -> j;
-}
+  ```java
+  for(int i=0; i<1,000,000,000; i++) {
+    int j=i;
+    Supplier<Integer> comsumer = () -> j;
+  }
 ```
 
-Although it might not be immediately obvious since the new keyword doesn't appear anywhere in the snippet, this code is liable to create 1,000,000,000 separate objects to represent the instances of the `() 
--> j` lambda expression. 
+  Although it might not be immediately obvious since the new keyword doesn't appear anywhere in the snippet, this code is liable to create 1,000,000,000 separate objects to represent the instances of the `() 
+  -> j` lambda expression. 
 
 
 
@@ -1058,69 +1060,69 @@ A similar situation arises when you aggregate with `collect()`. If you execute a
 3. Stream generally does not have to be closed. It is only required to close streams that operate on IO channels. Most Stream types don't operate on resources and therefore don't require closing.
 4. You can consider Streams to be the first library to take advantage of the power of lambda expressions in Java, but there's nothing magical about it (though it is tightly integrated into the core JDK libraries). Streams isn't part of the language — it's a carefully designed library that takes advantage of some newer language features.
 5. Because the Streams library is orchestrating the computation, but performing the computation involves callbacks to lambdas provided by the client, what those lambda expressions can do is subject to certain constraints. 
-  - Most stream operations require that the lambdas passed to them be *non-interfering* and *stateless*. Non-interfering means that they won't modify the stream source; stateless means that they won't access (read or write) any state that might change during the lifetime of the stream operation. 
-  - These requirements stem in part from the fact that the stream library might, if the pipeline executes in parallel, access the data source or invoke these lambdas concurrently from multiple threads. The restrictions are needed to ensure that the computation remains correct. 
-  - Certain reduction operations needs to satisfy associativity principle.
+    - Most stream operations require that the lambdas passed to them be *non-interfering* and *stateless*. Non-interfering means that they won't modify the stream source; stateless means that they won't access (read or write) any state that might change during the lifetime of the stream operation. 
+    - These requirements stem in part from the fact that the stream library might, if the pipeline executes in parallel, access the data source or invoke these lambdas concurrently from multiple threads. The restrictions are needed to ensure that the computation remains correct. 
+    - Certain reduction operations needs to satisfy associativity principle.
 
 6. Accumulator antipattern (this is the 6th version; 1 to 5 are discussed above)
 
-  - We usually write this code in loops to accumulate values into a single variable. 
+    - We usually write this code in loops to accumulate values into a single variable. 
 
-  - Why is this bad? First, this style of code is difficult to parallelize. Secondly, accumulator models the computation at too low a level — at the level of individual elements, rather than on the data set as a whole.
+    - Why is this bad? First, this style of code is difficult to parallelize. Secondly, accumulator models the computation at too low a level — at the level of individual elements, rather than on the data set as a whole.
 
-  - Instead use Reduction or Collection.
+    - Instead use Reduction or Collection.
 
-    -  Reduction is simple, flexible, and parallelizable, and operates at a higher level of abstraction than imperative accumulation.
+      -  Reduction is simple, flexible, and parallelizable, and operates at a higher level of abstraction than imperative accumulation.
 
-    - ```java
-      int sum = Stream.of(ints).reduce(0, (x,y) ‑> x+y);
-      ```
+      - ```java
+        int sum = Stream.of(ints).reduce(0, (x,y) ‑> x+y);
+        ```
 
-    - Collection is used if you want to organize the results into a data structure like a `List` or `Map`, or reduce it to more than one summary value
+      - Collection is used if you want to organize the results into a data structure like a `List` or `Map`, or reduce it to more than one summary value
 
-      ```java
-      <R> collect(Supplier<R> resultSupplier,
-                  BiConsumer<R, T> accumulator, 
-                  BiConsumer<R, R> combiner) 
-      ```
+        ```java
+        <R> collect(Supplier<R> resultSupplier,
+                    BiConsumer<R, T> accumulator, 
+                    BiConsumer<R, R> combiner) 
+        ```
 
 7. Use collect instead of reduce operations gives better performance in certain scenarios.
 
-  ```java
-  String concatenated = strings.stream().reduce("", String::concat);
-  ```
+    ```java
+    String concatenated = strings.stream().reduce("", String::concat);
+    ```
 
-  produces the correct result, but — because strings are immutable in Java and concatenation entails copying the whole string — it will have *O(n 2)* runtime (some strings will be copied many times). 
+    produces the correct result, but — because strings are immutable in Java and concatenation entails copying the whole string — it will have *O(n 2)* runtime (some strings will be copied many times). 
 
-  ```java
-  StringBuilder concat = strings.stream()
-                                .collect(() ‑> new StringBuilder(),
-                                 (sb, s) ‑> sb.append(s),
-                                 (sb, sb2) ‑> sb.append(sb2));
-  ```
+    ```java
+    StringBuilder concat = strings.stream()
+                                  .collect(() ‑> new StringBuilder(),
+                                  (sb, s) ‑> sb.append(s),
+                                  (sb, sb2) ‑> sb.append(sb2));
+    ```
 
-  This approach uses a `StringBuilder` as the result container. The three functions passed to `collect()` use the default constructor to create an empty container, the `append(String)` method to add an element to the container, and the `append(StringBuilder)` method to merge one container into another. This code is probably better expressed using method references rather than lambdas:
+    This approach uses a `StringBuilder` as the result container. The three functions passed to `collect()` use the default constructor to create an empty container, the `append(String)` method to add an element to the container, and the `append(StringBuilder)` method to merge one container into another. This code is probably better expressed using method references rather than lambdas:
 
-  ```java
-  StringBuilder concat = strings.stream()
-                                .collect(StringBuilder::new,
-                                         StringBuilder::append,
-                                         StringBuilder::append);
-  ```
-
-
-
-- This approach can be applied to anything like,
-
-  ```java
-  Set<String> uniqueStrings = strings.stream()
-                                     .collect(HashSet::new,
-                                              HashSet::add,
-                                              HashSet::addAll);
-  ```
+    ```java
+    StringBuilder concat = strings.stream()
+                                  .collect(StringBuilder::new,
+                                          StringBuilder::append,
+                                          StringBuilder::append);
+    ```
 
 
-- The relationship among the three functions passed to `collect()`— creating, populating, and merging result containers — is important enough to be given its own abstraction, `Collector`, along with a corresponding simplified version of `collect()`. 
+
+  - This approach can be applied to anything like,
+
+    ```java
+    Set<String> uniqueStrings = strings.stream()
+                                      .collect(HashSet::new,
+                                                HashSet::add,
+                                                HashSet::addAll);
+    ```
+
+
+  - The relationship among the three functions passed to `collect()`— creating, populating, and merging result containers — is important enough to be given its own abstraction, `Collector`, along with a corresponding simplified version of `collect()`. 
 
  
 
@@ -3206,7 +3208,7 @@ else
 
 What happens if your function is a function from `T -> Optional<U>`? Your result is now an `Optional<Optional<U>>`!
 
-That's what flatMap is about: if your function already returns an Optional, flatMap is a bit smarter and doesn't double wrap it, returning Optional<U>. 
+That's what flatMap is about: if your function already returns an Optional, flatMap is a bit smarter and doesn't double wrap it, returning `Optional<U>`. 
 It's the composition of two functional idioms: map and flatten.
 
 
@@ -3361,36 +3363,36 @@ Problems with the old API:
 
 **1) It's not intuitive**
 
-Look at the following example, here a user simply wants to create a Date object for 25th December 2017, 8.30 at night, do you think this is the right way to represent that date in Java?
+  Look at the following example, here a user simply wants to create a Date object for 25th December 2017, 8.30 at night, do you think this is the right way to represent that date in Java?
 
-`Date date = new Date(2017, 12, 25, 20, 30);`
+  `Date date = new Date(2017, 12, 25, 20, 30);`
 
-Well, even though it is looking alright, it is not correct. The above code contains two bugs, which is not at all intuitive. If you are using the java.util.Date class then you must know that year starts from 1900 and month starts from zero i.e. January is the zeroth month, not the first.
+  Well, even though it is looking alright, it is not correct. The above code contains two bugs, which is not at all intuitive. If you are using the java.util.Date class then you must know that year starts from 1900 and month starts from zero i.e. January is the zeroth month, not the first.
 
-Here is the right way to declare same date in Java:
+  Here is the right way to declare same date in Java:
 
-`int year = 2017 - 1900;`
-`int month = 12 - 1;`
-`Date date = new Date(year, month, 25, 20, 30);`
+  `int year = 2017 - 1900;`
+  `int month = 12 - 1;`
+  `Date date = new Date(year, month, 25, 20, 30);`
 
 **2) Timezones**
 
-Prior to JDK 8, Java uses String to represent TimeZone, a very bad idea. Ideally, they should have defined a constant or Enum instead of allowing the user to pass String.
+  Prior to JDK 8, Java uses String to represent TimeZone, a very bad idea. Ideally, they should have defined a constant or Enum instead of allowing the user to pass String.
 
-`TimeZone zone = TimeZone.getInstance("America/NewYork");`
+  `TimeZone zone = TimeZone.getInstance("America/NewYork");`
 
 **3) Calendar**
 
-The Calendar class is also not very user-friendly or intuitive in Java. You just cannot apply common sense or predictive knowledge.
+  The Calendar class is also not very user-friendly or intuitive in Java. You just cannot apply common sense or predictive knowledge.
 
 **4) Mutable**
 
-They are mutable. As a result, any time you want to give a date back (say, as an instance structure) you need to return a clone of that date instead of the date object itself (since otherwise, people can mutate your structure).
+  They are mutable. As a result, any time you want to give a date back (say, as an instance structure) you need to return a clone of that date instead of the date object itself (since otherwise, people can mutate your structure).
 
 **5) Not thread safe**
 
 
-Extensive list of samples of new DateTime API is  here: https://www.baeldung.com/java-8-date-time-intro
+  Extensive list of samples of new DateTime API is  here: https://www.baeldung.com/java-8-date-time-intro
 
 ## Extras
 Any feature that is missed out is available here:
@@ -3400,3 +3402,4 @@ https://www.oracle.com/technetwork/cn/community/developer-day/2-55-new-features-
 
 - https://dzone.com/articles/refactoring-java-8-code-with-collector (https://github.com/surajcm/java_fun_extraction_01)
 - https://gitlab.com/pravin/understanding-and-using-collectors/-/tree/master
+- Creating a custom Monad: https://dzone.com/articles/what-is-a-monad-basic-theory-for-a-java-developer?edition=672394
